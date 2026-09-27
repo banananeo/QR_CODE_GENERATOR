@@ -135,6 +135,79 @@
   outline-offset: 5px;
 }
 
+/* ==================== QR PATTERN PREVIEWS ==================== */
+
+.pattern-preview {
+  width: 72px;
+  height: 72px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  background: var(--color-paper);
+  border: 2px solid var(--color-black);
+  flex-shrink: 0;
+}
+
+.pattern-preview span {
+  display: block;
+  background: var(--color-black);
+}
+
+/* CLASSIC */
+.pattern-classic span {
+  border-radius: 0;
+}
+
+/* ROUNDED */
+.pattern-rounded span {
+  border-radius: 6px;
+}
+
+/* DOTS */
+.pattern-dots span {
+  border-radius: 50%;
+  transform: scale(0.72);
+}
+
+/* PIXEL */
+.pattern-pixel {
+  gap: 2px;
+}
+
+.pattern-pixel span:nth-child(2),
+.pattern-pixel span:nth-child(5),
+.pattern-pixel span:nth-child(8) {
+  transform: scale(0.65);
+}
+
+.pattern-pixel span:nth-child(1),
+.pattern-pixel span:nth-child(3),
+.pattern-pixel span:nth-child(7),
+.pattern-pixel span:nth-child(9) {
+  transform: scale(1.15);
+}
+
+/* DIAMOND */
+.pattern-diamond {
+  gap: 6px;
+}
+
+.pattern-diamond span {
+  transform: rotate(45deg) scale(0.72);
+}
+
+/* GRID */
+.pattern-grid {
+  gap: 2px;
+}
+
+.pattern-grid span {
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--color-paper);
+}
+
 .app,
 .preview-card {
   width: 100%;
@@ -422,9 +495,98 @@ input {
 }
 
 @media (max-width: 760px) {
+  /* ================================
+     MOBILE LAYOUT
+  ================================= */
+
+  .content-editor {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .content-controls {
+    width: 100%;
+    max-width: none;
+  }
+
   .content-preview {
     position: static;
+    width: 100%;
   }
+
+  .preview-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .qr-placeholder {
+    width: 100%;
+  }
+
+  .section-heading h2 {
+    max-width: 100%;
+    font-size: clamp(2.8rem, 13vw, 4.5rem);
+  }
+
+  .type-selector {
+    width: 100%;
+  }
+
+  .type-button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .app {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .content-section {
+    padding-top: 3rem;
+  }
+
+  .content-editor {
+    gap: 2.5rem;
+  }
+
+  .preview-card {
+    padding: 1rem;
+    box-shadow: 7px 7px 0 var(--color-black);
+  }
+
+  .preview-header {
+    font-size: 0.7rem;
+  }
+
+  .status {
+    font-size: 0.6rem;
+  }
+
+  .preview-footer {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .download-actions {
+    gap: 0.5rem;
+  }
+
+  .download-button {
+    min-height: 46px;
+  }
+}
+
+.download-button.copy-button {
+  background: var(--color-acid);
+  color: var(--color-black);
+}
+
+.download-button.copy-button:hover:not(:disabled) {
+  background: var(--color-black);
+  color: var(--color-acid);
 }
 
 .design-section {
@@ -664,6 +826,157 @@ input {
   opacity: 0.15;
 }
 
+/*Gradient CSS */
+
+
+/* ========================================
+   GRADIENT CONTROL
+======================================== */
+
+.gradient-control {
+  margin-top: 2rem;
+  max-width: 520px;
+
+  padding-top: 1.25rem;
+
+  border-top: var(--border-thin);
+}
+
+.gradient-control .control-header {
+  margin-bottom: 0;
+}
+
+/* ON / OFF button */
+
+.gradient-toggle {
+  min-width: 64px;
+  min-height: 36px;
+
+  padding: 0.45rem 0.7rem;
+
+  background: var(--color-background);
+  color: var(--color-black);
+
+  border: var(--border-thin);
+  box-shadow: 3px 3px 0 var(--color-black);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.gradient-toggle:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-black);
+}
+
+.gradient-toggle.active {
+  background: var(--color-acid);
+  color: var(--color-black);
+
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-black);
+}
+
+.gradient-toggle:focus-visible {
+  outline: 3px solid var(--color-acid);
+  outline-offset: 4px;
+}
+
+/* Gradient color controls */
+
+.gradient-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+
+  margin-top: 1rem;
+}
+
+.color-control {
+  min-height: 100px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.75rem 0.9rem;
+
+  background: var(--color-surface);
+
+  border: var(--border-thin);
+  box-shadow: 4px 4px 0 var(--color-black);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.color-control:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--color-black);
+}
+
+.color-control span {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.color-control input[type="color"] {
+  width: 48px;
+  height: 48px;
+
+  padding: 0;
+
+  background: none;
+
+  border: var(--border-thin);
+
+  cursor: pointer;
+}
+
+.color-control input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 3px;
+}
+
+.color-control input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+
+.color-control input[type="color"]:focus-visible {
+  outline: 3px solid var(--color-acid);
+  outline-offset: 3px;
+}
+
+/* Mobile */
+
+@media (max-width: 520px) {
+  .gradient-control {
+    max-width: none;
+  }
+
+  .gradient-options {
+    grid-template-columns: 1fr;
+  }
+
+  .color-control {
+    min-height: 72px;
+  }
+}
+
 .quick-palettes {
   margin-top: 1.5rem;
 }
@@ -692,6 +1005,7 @@ input {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.65rem;
   font-weight: 600;
+  color: #000000;
 
   cursor: pointer;
 
@@ -726,6 +1040,18 @@ input {
 
   .color-card {
     min-height: 220px;
+  }
+
+  .input-error {
+    margin: 0.5rem 0 0;
+    padding: 0.6rem 0.75rem;
+    border: 2px solid var(--color-black);
+    background: var(--color-pink);
+    color: var(--color-black);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   .palette-list {
@@ -968,7 +1294,24 @@ input {
 .pattern-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+@media (max-width: 380px) {
+  .pattern-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pattern-card {
+    min-width: 0;
+  }
+}
+
+.pattern-info {
+  text-align: center;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+  text-wrap: initial;
 }
 
 .pattern-card {
@@ -1006,4 +1349,703 @@ input {
 
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--color-black);
+}
+
+
+/* =========================================================
+   FINAL MOBILE RESPONSIVE OVERRIDES
+   These rules intentionally come last so they override the
+   desktop .content-editor / .preview-card rules above.
+========================================================= */
+
+@media (max-width: 760px) {
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 1rem 3rem;
+  }
+
+  .navbar {
+    width: 100%;
+    min-height: 72px;
+    gap: 0.75rem;
+  }
+
+  .brand {
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .theme-button {
+    flex-shrink: 0;
+  }
+
+  .intro {
+    padding: 1.5rem 0 2.5rem;
+  }
+
+  .intro h1,
+  h1 {
+    max-width: 100%;
+    font-size: clamp(3rem, 14vw, 4.5rem);
+    line-height: 0.88;
+    overflow-wrap: break-word;
+  }
+
+  .intro .hero-description,
+  .hero-description {
+    max-width: 100%;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .content-section {
+    width: 100%;
+    padding: 3rem 0;
+  }
+
+  /* Critical fix: stack controls and preview vertically */
+  .content-editor {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .content-controls,
+  .content-preview {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .content-preview {
+    position: static;
+    top: auto;
+  }
+
+  .section-heading {
+    width: 100%;
+  }
+
+  .section-heading h2 {
+    max-width: 100%;
+    font-size: clamp(3rem, 14vw, 4.5rem);
+    line-height: 0.88;
+  }
+
+  .type-selector {
+    width: 100%;
+    gap: 0.65rem;
+  }
+
+  .type-button {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .preview-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    justify-self: stretch;
+    padding: 1rem;
+  }
+
+  .qr-placeholder {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+  }
+
+  .qr-canvas-wrapper {
+    width: min(var(--qr-size), 100%);
+    max-width: 100%;
+  }
+
+  .preview-header {
+    gap: 0.75rem;
+  }
+
+  .preview-header>span:first-child {
+    min-width: 0;
+  }
+
+  .status {
+    flex-shrink: 0;
+  }
+
+  .download-actions {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .download-button {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .app {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .navbar {
+    min-height: 68px;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .nav-links {
+    gap: 0.65rem;
+    font-size: 0.62rem;
+  }
+
+  .theme-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .intro {
+    padding-top: 1.25rem;
+  }
+
+  .intro h1,
+  h1 {
+    font-size: clamp(2.8rem, 14vw, 4rem);
+  }
+
+  .content-editor {
+    gap: 2.5rem;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(2.8rem, 14vw, 4rem);
+  }
+
+  .preview-card {
+    padding: 0.8rem;
+    box-shadow: 7px 7px 0 var(--color-black);
+  }
+
+  .qr-placeholder {
+    padding: 0.5rem;
+  }
+
+  .preview-header {
+    font-size: 0.68rem;
+  }
+
+  .status {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.58rem;
+  }
+
+  .preview-footer {
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .download-actions {
+    gap: 0.5rem;
+  }
+
+  .download-button {
+    min-height: 46px;
+  }
+}
+
+/* ==================== RECENT QR CODES ==================== */
+
+.recent-section {
+  margin-top: 8rem;
+  padding: 5rem 0 6rem;
+  border-top: var(--border-thick);
+}
+
+.recent-section .section-heading {
+  margin-bottom: 2rem;
+}
+
+.recent-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+}
+
+.recent-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1rem;
+
+  text-align: left;
+  background: var(--color-surface);
+  color: var(--color-black);
+
+  border: var(--border-thick);
+  box-shadow: var(--shadow-small);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.recent-card:hover {
+  background: var(--color-acid);
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 var(--color-black);
+}
+
+.recent-card-index {
+  padding: 0.4rem 0.5rem;
+
+  background: var(--color-black);
+  color: var(--color-acid);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.recent-card-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.recent-card-content strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.95rem;
+}
+
+.recent-card-content span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  opacity: 0.6;
+}
+
+.recent-card-action {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.recent-empty {
+  max-width: 900px;
+  padding: 2rem;
+
+  background: var(--color-surface);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-small);
+}
+
+.recent-empty span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.recent-empty p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.65;
+}
+
+@media (max-width: 760px) {
+  .recent-section {
+    margin-top: 5rem;
+    padding: 3rem 0 4rem;
+  }
+
+  .recent-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .recent-card-action {
+    grid-column: 2;
+  }
+}
+
+/* ========================================
+   QR DESIGN OPTIONS
+======================================== */
+
+.option-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+.option-button {
+  min-height: 64px;
+  padding: 0.65rem 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+
+  background: var(--color-background);
+  color: var(--color-black);
+
+  border: var(--border-thin);
+  box-shadow: 3px 3px 0 var(--color-black);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.option-button strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1rem;
+}
+
+.option-button span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+}
+
+.option-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--color-black);
+}
+
+.option-button.active {
+  background: var(--color-acid);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--color-black);
+}
+
+.control-hint {
+  margin: 0.6rem 0 0;
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  line-height: 1.5;
+
+  opacity: 0.6;
+}
+
+@media (max-width: 520px) {
+  .option-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.info-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-button {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--color-black);
+  color: var(--color-background);
+
+  border: 2px solid var(--color-black);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.info-button:hover {
+  background: var(--color-acid);
+  color: var(--color-black);
+}
+
+.info-box {
+  margin-top: 0.75rem;
+  padding: 1rem;
+
+  background: var(--color-lavender);
+  color: var(--color-black);
+
+  border: var(--border-thin);
+  box-shadow: 4px 4px 0 var(--color-black);
+}
+
+.info-box strong {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+}
+
+.info-box p {
+  margin: 0 0 0.75rem;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.info-box span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+/* ========================================
+   VISUAL PRESETS
+======================================== */
+
+.preset-section {
+  margin-top: 3rem;
+  max-width: 650px;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.preset-card {
+  position: relative;
+
+  min-height: 150px;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  background: var(--color-background);
+  color: var(--color-black);
+
+  border: var(--border-thick);
+  box-shadow: 6px 6px 0 var(--color-black);
+
+  text-align: left;
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.preset-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 var(--color-black);
+}
+
+.preset-card:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--color-black);
+}
+
+/* Small QR-like preview */
+
+/* ========================================
+   PRESET QR PREVIEWS
+======================================== */
+
+.preset-preview {
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+
+  padding: 6px;
+
+  border: 2px solid var(--preset-foreground);
+
+  flex-shrink: 0;
+}
+
+.preset-preview span {
+  display: block;
+  background: var(--preset-foreground);
+}
+
+
+/* ========================================
+   CLASSIC
+======================================== */
+
+.preset-preview-classic {
+  gap: 3px;
+}
+
+.preset-preview-classic span {
+  border-radius: 0;
+}
+
+
+/* ========================================
+   PIXEL / INK
+======================================== */
+
+.preset-preview-pixel {
+  gap: 1px;
+}
+
+.preset-preview-pixel span {
+  border-radius: 0;
+}
+
+
+/* ========================================
+   DOTS / ACID
+======================================== */
+
+.preset-preview-dots {
+  gap: 4px;
+}
+
+.preset-preview-dots span {
+  border-radius: 50%;
+  transform: scale(0.72);
+}
+
+
+/* ========================================
+   DIAMOND / NIGHT
+======================================== */
+
+.preset-preview-diamond {
+  gap: 5px;
+}
+
+.preset-preview-diamond span {
+  transform: rotate(45deg) scale(0.68);
+}
+
+/* Preset information */
+
+.preset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.preset-info strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+}
+
+.preset-info span {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.preset-arrow {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.preset-card:nth-child(1) {
+  /* CLASSIC */
+  background: #111111;
+  color: #f7f5ef;
+}
+
+.preset-card:nth-child(2) {
+  /* INK */
+  background: #ffffff;
+  color: #111111;
+}
+
+.preset-card:nth-child(3) {
+  /* ACID */
+  background: #d7ff3f;
+  color: #111111;
+}
+
+.preset-card:nth-child(4) {
+  /* NIGHT */
+  background: #111111;
+  color: #f7f5ef;
+}
+
+/* Preview borders */
+
+.preset-card:nth-child(1) .preset-preview,
+
+.preset-card:nth-child(4) .preset-preview {
+  background: #111111;
+  border-color: #f7f5ef;
+}
+
+.preset-card:nth-child(2) .preset-preview {
+  background: #ffffff;
+  border-color: #111111;
+}
+
+.preset-card:nth-child(3) .preset-preview {
+  background: #d7ff3f;
+  border-color: #111111;
+}
+
+@media (max-width: 760px) {
+  .preset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-card {
+    min-height: 130px;
+  }
 }

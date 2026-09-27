@@ -1,7 +1,10 @@
 import "./App.css";
-import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
-import InteractiveBackground from "./InteractiveBackground";
 import { useEffect, useRef, useState } from "react";
+import {
+  renderCustomQR,
+  createCustomQRSVG,
+} from "./customQrRenderer";
+import InteractiveBackground from "./InteractiveBackground";
 
 const qrTypes = {
   website: {
@@ -39,58 +42,112 @@ const qrTypes = {
     inputType: "text",
   },
 };
+const qrPatternStyles = {
+  classic: "square",
+  rounded: "rounded",
+  dots: "dots",
+  pixel: "classy",
+  diamond: "classy-rounded",
+  grid: "square",
+};
 
 const qrPatterns = [
   {
     id: "classic",
-    name: "Classic",
-    description: "Original QR style",
+    name: " Classic ",
+    description: " Original QR style ",
   },
 
   {
     id: "rounded",
-    name: "Rounded",
-    description: "Soft corners",
+    name: " Rounded ",
+    description: " Soft corners ",
   },
 
   {
     id: "dots",
-    name: "Dots",
-    description: "Circular modules",
+    name: " Dots ",
+    description: " Circular modules ",
   },
 
   {
     id: "pixel",
-    name: "Pixel",
-    description: "Sharp blocks",
+    name: " Pixel",
+    description: " Sharp blocks ",
   },
 
   {
     id: "diamond",
-    name: "Diamond",
-    description: "Angular modules",
+    name: " Diamond ",
+    description: " Angular modules ",
   },
 
   {
     id: "grid",
-    name: "Grid",
-    description: "Structured modules",
+    name: " Grid ",
+    description: " Structured modules ",
   },
 ];
+const qrPresets = [
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Clean & balanced",
+    foregroundColor: "#111111",
+    backgroundColor: "#F7F5EF",
+    qrPattern: "classic",
+  },
+  {
+    id: "ink",
+    name: "Ink",
+    description: "Sharp & minimal",
+    foregroundColor: "#111111",
+    backgroundColor: "#FFFFFF",
+    qrPattern: "pixel",
+  },
+  {
+    id: "acid",
+    name: "Acid",
+    description: "Bold & electric",
+    foregroundColor: "#111111",
+    backgroundColor: "#D7FF3F",
+    qrPattern: "dots",
+  },
+  {
+    id: "night",
+    name: "Night",
+    description: "Dark & crisp",
+    foregroundColor: "#F7F5EF",
+    backgroundColor: "#111111",
+    qrPattern: "diamond",
+  },
+];
+
+/* ==================== MAIN ==================== */
+
 function App() {
   /* ==================== STATE ==================== */
-
+  const [copied, setCopied] = useState(false);
   const [selectedType, setSelectedType] = useState("website");
   const [content, setContent] = useState("");
+  //QR Size 
   const [qrSize, setQrSize] = useState(320);
+  //Error Correction 
+  const [errorCorrection, setErrorCorrection] = useState("M");
+  //QR Margin
+  const [qrMargin, setQrMargin] = useState(16);
+  //QR Pattern
   const [qrPattern, setQrPattern] = useState("classic");
-
+  const [error, setError] = useState("");
+  //
+  const [showErrorInfo, setShowErrorInfo] = useState(false);
+  //Foreground Color
   const [foregroundColor, setForegroundColor] =
     useState("#111111");
-
+  //Background Color
   const [backgroundColor, setBackgroundColor] =
     useState("#F7F5EF");
-
+  //Dark Mode
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("qr-lab-theme") === "dark";
   });
@@ -98,20 +155,54 @@ function App() {
   /* ==================== REFS ==================== */
 
   const qrCanvasRef = useRef(null);
-  const qrSvgRef = useRef(null);
-
-  /* ==================== DARK MODE ==================== */
-
-  useEffect(() => {
-    localStorage.setItem(
-      "qr-lab-theme",
-      isDarkMode ? "dark" : "light"
-    );
-  }, [isDarkMode]);
-
   /* ==================== QR TYPE ==================== */
 
   const currentType = qrTypes[selectedType];
+  const validateContent = (value, type) => {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return "";
+    }
+
+    if (type === "website") {
+      try {
+        const url = new URL(trimmed);
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+          return "Please enter a valid HTTP or HTTPS URL.";
+        }
+      } catch {
+        return "Please enter a valid website URL.";
+      }
+    }
+
+    if (type === "email") {
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(trimmed)) {
+        return "Please enter a valid email address.";
+      }
+    }
+
+    if (type === "phone") {
+      const phonePattern =
+        /^[+]?[\d\s()-]{7,20}$/;
+
+      if (!phonePattern.test(trimmed)) {
+        return "Please enter a valid phone number.";
+      }
+    }
+
+    if (type === "wifi") {
+      if (trimmed.length < 2) {
+        return "Please enter a valid Wi-Fi network name.";
+      }
+    }
+
+    return "";
+  };
 
   /* ==================== QR VALUE ==================== */
 
@@ -131,14 +222,145 @@ function App() {
     return content;
   })();
 
+  const saveRecentQR = () => {
+    if (!qrValue || error) return;
+
+    const newQR = {
+      id: Date.now(),
+      type: selectedType,
+      content,
+      qrSize,
+      qrPattern,
+      foregroundColor,
+      backgroundColor,
+      errorCorrection,
+      qrMargin,
+    };
+
+    setRecentQRCodes((current) => {
+      const filtered = current.filter(
+        (item) =>
+          !(
+            item.type === newQR.type &&
+            item.content === newQR.content
+          )
+      );
+
+      const updated = [newQR, ...filtered].slice(0, 6);
+
+      localStorage.setItem(
+        "qr-lab-recent",
+        JSON.stringify(updated)
+      );
+
+      return updated;
+    });
+  };
+  const reuseRecentQR = (qr) => {
+    setSelectedType(qr.type);
+    setContent(qr.content);
+    setQrSize(qr.qrSize);
+    setQrPattern(qr.qrPattern);
+    setForegroundColor(qr.foregroundColor);
+    setBackgroundColor(qr.backgroundColor);
+    setErrorCorrection(qr.errorCorrection);
+    setQrMargin(qr.qrMargin);
+    setError("");
+  };
+  /* ==================== GRADIENT ==================== */
+  const [gradientEnabled, setGradientEnabled] = useState(false);
+  const [gradientStart, setGradientStart] = useState("#111111");
+  const [gradientEnd, setGradientEnd] = useState("#A89BFF");
+
+  /* ==================== PRESETS ==================== */
+  const applyPreset = (preset) => {
+    setForegroundColor(preset.foregroundColor);
+    setBackgroundColor(preset.backgroundColor);
+    setQrPattern(preset.qrPattern);
+  };
+
+
+  /* ==================== DARK MODE ==================== */
+
+  useEffect(() => {
+    localStorage.setItem(
+      "qr-lab-theme",
+      isDarkMode ? "dark" : "light"
+    );
+  }, [isDarkMode]);
+  useEffect(() => {
+    let cancelled = false;
+
+    const generateQR = async () => {
+      if (!qrCanvasRef.current || !qrValue) {
+        return;
+      }
+
+      const canvas = await renderCustomQR({
+        value: qrValue,
+        size: qrSize,
+        foregroundColor,
+        backgroundColor,
+        pattern: qrPattern,
+        margin: qrMargin,
+        errorCorrection,
+        gradientEnabled,
+        gradientStart,
+        gradientEnd,
+      });
+
+      if (cancelled || !canvas) {
+        return;
+      }
+
+      const container = qrCanvasRef.current;
+
+      container.innerHTML = "";
+      container.appendChild(canvas);
+    };
+
+    generateQR();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    qrValue,
+    qrSize,
+    qrPattern,
+    foregroundColor,
+    backgroundColor,
+    qrMargin,
+    errorCorrection,
+  ]);
+
+  /* ==================== COPY ==================== */
+  const copyToClipboard = async () => {
+    if (!qrValue || error) return;
+
+    try {
+      await navigator.clipboard.writeText(qrValue);
+
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   /* ==================== DOWNLOAD PNG ==================== */
 
+
   const downloadPNG = () => {
-    if (!qrCanvasRef.current || !qrValue) {
+    const canvas = qrCanvasRef.current?.querySelector("canvas");
+    if (!canvas || !qrValue || error) {
       return;
     }
 
-    const canvas = qrCanvasRef.current;
+    saveRecentQR();
 
     const link = document.createElement("a");
 
@@ -148,27 +370,35 @@ function App() {
     link.click();
   };
 
-  /* ==================== DOWNLOAD SVG ==================== */
-
   const downloadSVG = () => {
-    if (!qrSvgRef.current || !qrValue) {
-      return;
-    }
+    if (!qrValue || error) return;
 
-    const svg = qrSvgRef.current;
+    saveRecentQR();
 
-    const serializer = new XMLSerializer();
+    const svgString = createCustomQRSVG({
+      value: qrValue,
+      size: qrSize,
+      foregroundColor,
+      backgroundColor,
+      pattern: qrPattern,
+      margin: qrMargin,
+      errorCorrection,
+      gradientEnabled,
+      gradientStart,
+      gradientEnd,
 
-    const svgString = serializer.serializeToString(svg);
-
-    const blob = new Blob([svgString], {
-      type: "image/svg+xml;charset=utf-8",
     });
+
+    if (!svgString) return;
+
+    const blob = new Blob(
+      [svgString],
+      { type: "image/svg+xml;charset=utf-8" }
+    );
 
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
-
     link.download = `qr-lab-${selectedType}.svg`;
     link.href = url;
 
@@ -176,6 +406,17 @@ function App() {
 
     URL.revokeObjectURL(url);
   };
+
+  /* LOCAL STORAGE */
+  const [recentQRCodes, setRecentQRCodes] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("qr-lab-recent") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  });
 
   /* ==================== RENDER ==================== */
 
@@ -240,6 +481,8 @@ function App() {
         </button>
       </header>
 
+
+
       {/* ==================== INTRO ==================== */}
 
       <section className="intro">
@@ -290,9 +533,11 @@ function App() {
                       ? "active"
                       : ""
                       }`}
-                    onClick={() =>
-                      setSelectedType(type)
-                    }
+                    onClick={() => {
+                      setSelectedType(type);
+                      setContent("");
+                      setError("");
+                    }}
                   >
                     {config.name}
                   </button>
@@ -311,11 +556,15 @@ function App() {
                 id="qr-content"
                 type={currentType.inputType}
                 value={content}
-                onChange={(event) =>
-                  setContent(event.target.value)
-                }
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setContent(value);
+                  setError(validateContent(value, selectedType));
+                }}
                 placeholder={currentType.placeholder}
+                className={error ? "input-error" : ""}
               />
+              {error && <p className="error-message">{error}</p>}
             </div>
 
             {/* ==================== QR SIZE ==================== */}
@@ -344,6 +593,101 @@ function App() {
                   )
                 }
               />
+            </div>
+            {/* ==================== ERROR CORRECTION ==================== */}
+
+            {/* ==================== ERROR CORRECTION ==================== */}
+
+            <div className="design-control">
+              <div className="control-header">
+                <span>ERROR CORRECTION</span>
+
+
+                <div className="info-trigger">
+                  <output>{errorCorrection}</output>
+
+                  <button
+                    type="button"
+                    className="info-button"
+                    onClick={() =>
+                      setShowErrorInfo((current) => !current)
+                    }
+                    aria-label="Learn about error correction"
+                    aria-expanded={showErrorInfo}
+                  >
+                    ?
+                  </button>
+                </div>
+
+              </div>
+              {showErrorInfo && (
+                <div className="info-box">
+                  <strong>HOW DOES THIS WORK?</strong>
+
+                  <p>
+                    Error correction helps your QR code stay
+                    scannable even when part of it is damaged
+                    or covered.
+                  </p>
+
+                  <span>
+                    L = less recovery&nbsp;&nbsp; H = more recovery
+                  </span>
+                </div>
+              )}
+
+              <div className="option-row">
+                {["L", "M", "Q", "H"].map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    className={`option-button ${errorCorrection === level ? "active" : ""
+                      }`}
+                    onClick={() => setErrorCorrection(level)}
+                  >
+                    <strong>{level}</strong>
+
+                    <span>
+                      {level === "L"
+                        ? "Low"
+                        : level === "M"
+                          ? "Medium"
+                          : level === "Q"
+                            ? "Quartile"
+                            : "High"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* ==================== QR MARGIN ==================== */}
+
+            <div className="design-control">
+              <div className="control-header">
+                <label htmlFor="qr-margin">
+                  QR MARGIN
+                </label>
+
+                <output htmlFor="qr-margin">
+                  {qrMargin}px
+                </output>
+              </div>
+
+              <input
+                id="qr-margin"
+                type="range"
+                min="0"
+                max="40"
+                step="4"
+                value={qrMargin}
+                onChange={(event) =>
+                  setQrMargin(Number(event.target.value))
+                }
+              />
+
+              <p className="control-hint">
+                Controls the clear space around the QR code.
+              </p>
             </div>
 
             {/* ==================== STEP 02 ==================== */}
@@ -446,6 +790,7 @@ function App() {
 
                   </div>
 
+
                   {/* ==================== BACKGROUND ==================== */}
 
                   <div className="color-card">
@@ -513,6 +858,48 @@ function App() {
                     </div>
 
                   </div>
+
+                </div>
+                <div className="gradient-control">
+
+                  <div className="control-header">
+                    <span>GRADIENT</span>
+
+                    <button
+                      type="button"
+                      className={`gradient-toggle ${gradientEnabled ? "active" : ""}`}
+                      onClick={() => setGradientEnabled((current) => !current)}
+                      aria-pressed={gradientEnabled}
+                    >
+                      {gradientEnabled ? "ON" : "OFF"}
+                    </button>
+                  </div>
+
+                  {gradientEnabled && (
+                    <div className="gradient-options">
+
+                      <label className="color-control">
+                        <span>START</span>
+
+                        <input
+                          type="color"
+                          value={gradientStart}
+                          onChange={(event) => setGradientStart(event.target.value)}
+                        />
+                      </label>
+
+                      <label className="color-control">
+                        <span>END</span>
+
+                        <input
+                          type="color"
+                          value={gradientEnd}
+                          onChange={(event) => setGradientEnd(event.target.value)}
+                        />
+                      </label>
+
+                    </div>
+                  )}
 
                 </div>
 
@@ -667,6 +1054,54 @@ function App() {
               </div>
 
             </div>
+            {/* ==================== VISUAL PRESETS ==================== */}
+
+            <div className="preset-section">
+
+              <div className="design-label">
+                <span>VISUAL PRESETS</span>
+                <span>01 / 04</span>
+              </div>
+
+              <div className="preset-grid">
+                {qrPresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className="preset-card"
+                    onClick={() => applyPreset(preset)}
+                  >
+                    <div className="preset-preview">
+                      <div
+                        className={`preset-preview preset-preview-${preset.qrPattern}`}
+                        style={{
+                          "--preset-foreground": preset.foregroundColor,
+                          "--preset-background": preset.backgroundColor,
+                        }}
+                      >
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                    </div>
+
+                    <div className="preset-info">
+                      <strong>{preset.name}</strong>
+                      <span>{preset.description}</span>
+                    </div>
+
+                    <span className="preset-arrow">→</span>
+                  </button>
+                ))}
+              </div>
+
+            </div>
 
           </div>
 
@@ -706,13 +1141,9 @@ function App() {
                       "--qr-size": `${qrSize}px`,
                     }}
                   >
-                    <QRCodeCanvas
-                      value={qrValue}
-                      size={qrSize}
-                      bgColor={backgroundColor}
-                      fgColor={foregroundColor}
-                      level="m"
-                      includeMargin
+                    <div
+                      ref={qrCanvasRef}
+                      className="qr-styled-output"
                     />
                   </div>
                 ) : (
@@ -724,29 +1155,8 @@ function App() {
 
               {/* ==================== HIDDEN SVG SOURCE ==================== */}
 
-              <div
-                className="qr-svg-source"
-                aria-hidden="true"
-                style={{
-                  display: "none",
-                }}
-              >
-                {qrValue && (
-                  <QRCodeSVG
-                    ref={qrSvgRef}
-                    value={qrValue}
-                    size={qrSize}
-                    bgColor={
-                      backgroundColor
-                    }
-                    fgColor={
-                      foregroundColor
-                    }
-                    level="M"
-                    includeMargin
-                  />
-                )}
-              </div>
+
+
 
               {/* ==================== DOWNLOAD ==================== */}
 
@@ -775,6 +1185,14 @@ function App() {
                 >
                   SVG
                 </button>
+                <button
+                  type="button"
+                  className="download-button copy-button"
+                  onClick={copyToClipboard}
+                  disabled={!qrValue || !!error}
+                >
+                  {copied ? "COPIED ✓" : "COPY TO CLIPBOARD"}
+                </button>
 
               </div>
 
@@ -783,6 +1201,53 @@ function App() {
           </div>
 
         </div>
+      </section>
+      {/* ==================== RECENT QR CODES ==================== */}
+
+      <section className="recent-section" id="recent">
+        <div className="section-heading">
+          <p className="eyebrow">RECENT</p>
+
+          <h2>YOUR RECENT QR.</h2>
+        </div>
+
+        {recentQRCodes.length === 0 ? (
+          <div className="recent-empty">
+            <span>NO SAVED QR CODES YET.</span>
+            <p>
+              Download a QR code and it will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="recent-grid">
+            {recentQRCodes.map((qr) => (
+              <button
+                key={qr.id}
+                type="button"
+                className="recent-card"
+                onClick={() => reuseRecentQR(qr)}
+              >
+                <div className="recent-card-index">
+                  {qr.type.toUpperCase()}
+                </div>
+
+                <div className="recent-card-content">
+                  <strong>
+                    {qr.content}
+                  </strong>
+
+                  <span>
+                    {qr.qrPattern.toUpperCase()} · {qr.qrSize}px
+                  </span>
+                </div>
+
+                <span className="recent-card-action">
+                  REUSE →
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );
