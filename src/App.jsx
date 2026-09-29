@@ -365,7 +365,9 @@ function App() {
     backgroundColor,
     qrMargin,
     errorCorrection,
-    gradientEnabled, gradientStart, gradientEnd,
+    gradientEnabled,
+    gradientStart,
+    gradientEnd,
   ]);
 
   /* ==================== COPY ==================== */

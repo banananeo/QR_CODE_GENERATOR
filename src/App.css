@@ -1914,11 +1914,14 @@
 .preset-card {
   position: relative;
 
-  min-height: 180px;
+  min-height: 150px;
   padding: 1rem;
 
-  display: block;
-
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1rem;
 
   background: var(--color-background);
   color: var(--color-black);
@@ -1936,12 +1939,12 @@
 
 .preset-card:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--color-black);
+  box-shadow: 9px 9px 0 #111111;
 }
 
 .preset-card:active {
   transform: translate(3px, 3px);
-  box-shadow: 2px 2px 0 var(--color-black);
+  box-shadow: 2px 2px 0 #111111;
 }
 
 /* Small QR-like preview */

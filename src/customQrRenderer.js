@@ -8,6 +8,7 @@ const PATTERN_TYPES = {
     hex: "hex",
     pixel: "pixel",
     grid: "grid",
+    rounded: "rounded",
 };
 
 function drawModule(ctx, type, x, y, size, color) {
@@ -256,6 +257,7 @@ function moduleToSVG(
             );
             break;
         }
+
 
         default:
             parts.push(
