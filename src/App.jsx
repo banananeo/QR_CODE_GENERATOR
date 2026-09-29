@@ -453,7 +453,7 @@ function App() {
         }}
         aria-label="Scroll to QR preview"
       >
-        SCROLL DOWN ↓
+        SCROLL TO QR
       </button>
 
       <InteractiveBackground content={content} />
