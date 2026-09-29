@@ -2210,18 +2210,3 @@
     display: none;
   }
 }
-
-.mobile-scroll-button {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  z-index: 1000;
-  background: var(--color-black);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: none;
-  font-family: "Space Grotesk", sans-serif;
-}
