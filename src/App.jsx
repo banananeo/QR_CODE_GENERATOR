@@ -127,6 +127,7 @@ const qrPresets = [
 
 function App() {
   /* ==================== STATE ==================== */
+  const [showScrollButton, setShowScrollButton] = useState(true);
   const [copied, setCopied] = useState(false);
   const [selectedType, setSelectedType] = useState("website");
   const [content, setContent] = useState("");
@@ -288,6 +289,7 @@ function App() {
       isDarkMode ? "dark" : "light"
     );
   }, [isDarkMode]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -295,6 +297,24 @@ function App() {
       if (!qrCanvasRef.current || !qrValue) {
         return;
       }
+      useEffect(() => {
+        const preview = document.querySelector(".preview-card");
+
+        if (!preview) return;
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            setShowScrollButton(!entry.isIntersecting);
+          },
+          {
+            threshold: 0.2,
+          }
+        );
+
+        observer.observe(preview);
+
+        return () => observer.disconnect();
+      }, []);
 
       const canvas = await renderCustomQR({
         value: qrValue,
@@ -422,6 +442,20 @@ function App() {
 
   return (
     <main className={`app ${isDarkMode ? "dark-mode" : ""}`}>
+      <button
+        type="button"
+        className="mobile-scroll-button"
+        onClick={() => {
+          document.querySelector(".preview-card")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }}
+        aria-label="Scroll to QR preview"
+      >
+        SCROLL DOWN ↓
+      </button>
+
       <InteractiveBackground content={content} />
 
       {/* ==================== HEADER ==================== */}
@@ -1249,7 +1283,18 @@ function App() {
           </div>
         )}
       </section>
-    </main>
+      <footer className="site-footer">
+        <span>© 2026 QR//LAB   </span>
+        <a
+          href="https://github.com/banananeo/QR_CODE_GENERATOR"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="github-link"
+        >
+          GITHUB ↗
+        </a>
+      </footer>
+    </main >
   );
 }
 
