@@ -227,17 +227,7 @@
   z-index: 1;
 }
 
-.preview-card {
-  width: 100%;
-  max-width: 520px;
-  margin: 0;
-  justify-self: end;
 
-  background: var(--color-lavender);
-  box-shadow: var(--shadow-large);
-
-  padding: 1rem;
-}
 
 .input-group {
   width: 100%;
@@ -248,18 +238,19 @@
 .input-group input,
 .status,
 .theme-button {
+
   transition:
     background-color 0.25s ease,
     color 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
-  margin-top: 1rem;
+
 }
 
 .input-group input::placeholder {
   color: #777777;
   opacity: 1;
-  margin-top: 1rem;
+
 }
 
 .app.dark-mode .input-group input::placeholder {
@@ -271,10 +262,7 @@
 
 
 
-.app {
-  position: relative;
-  z-index: 1;
-}
+
 
 .intro {
   padding: 1.25rem 1rem 2rem;
@@ -379,7 +367,7 @@
 
 
 .content-section {
-  padding: var(--space-xl) 0;
+  padding: var(--space-xl) var(--space-lg);
 }
 
 
@@ -594,17 +582,6 @@
     min-height: 220px;
   }
 
-  .input-error {
-    margin: 0.5rem 0 0;
-    padding: 0.6rem 0.75rem;
-    border: 2px solid var(--color-black);
-    background: var(--color-pink);
-    color: var(--color-black);
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 0.72rem;
-    font-weight: 600;
-    line-height: 1.4;
-  }
 
   .palette-list {
     display: grid;
@@ -707,6 +684,7 @@
 .download-button.copy-button {
   background: var(--color-acid);
   color: var(--color-black);
+  grid-column: 1/-1;
 }
 
 .download-button.copy-button:hover:not(:disabled) {
@@ -830,7 +808,7 @@
   justify-content: space-between;
 
   padding: 0.8rem 2rem;
-
+  padding: 0 0 0.8rem;
   border-bottom: var(--border-thin);
 
   font-family: "IBM Plex Mono", monospace;
@@ -851,7 +829,6 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding-bottom: 1rem;
 
   min-width: 0;
 }
@@ -910,44 +887,7 @@
   opacity: 0.5;
 }
 
-.mini-pattern {
-  margin-top: auto;
 
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-
-  height: 72px;
-
-  padding: 0.75rem;
-
-  border-top: var(--border-thin);
-}
-
-.mini-pattern span {
-  width: 100%;
-  height: 100%;
-
-  background-color: var(--color-black);
-
-  opacity: 0.15;
-}
-
-.foreground-pattern span:nth-child(1),
-.foreground-pattern span:nth-child(2),
-.foreground-pattern span:nth-child(5),
-.foreground-pattern span:nth-child(7),
-.foreground-pattern span:nth-child(8) {
-  opacity: 1;
-}
-
-.background-pattern span:nth-child(2),
-.background-pattern span:nth-child(4),
-.background-pattern span:nth-child(6),
-.background-pattern span:nth-child(8),
-.background-pattern span:nth-child(9) {
-  opacity: 0.15;
-}
 
 
 /* ========================================
@@ -1128,7 +1068,7 @@
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.65rem;
   font-weight: 600;
-  color: #000000;
+
 
   cursor: pointer;
 
@@ -1676,8 +1616,8 @@
 /* ==================== RECENT QR CODES ==================== */
 
 .recent-section {
-  margin-top: 8rem;
-  padding: 5rem 0 6rem;
+  margin-top: 0;
+  padding: 3rem 0 4rem;
   border-top: var(--border-thick);
 }
 
@@ -1795,7 +1735,7 @@
 @media (max-width: 760px) {
   .recent-section {
     margin-top: 5rem;
-    padding: 3rem 0 4rem;
+    padding: 2rem 0 3rem;
   }
 
   .recent-grid {
@@ -1873,9 +1813,11 @@
 .control-hint {
   margin: 0.6rem 0 0;
 
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.65rem;
+  font-family: "Space Grotesk", sans-serif;
+  color: #000000;
+  font-size: 0.7rem;
   line-height: 1.5;
+  font-weight: 1000;
 
   opacity: 0.6;
 }
@@ -1924,7 +1866,7 @@
 .info-box {
   margin-top: 0.75rem;
   padding: 1rem;
-
+  margin-bottom: 1.25rem;
   background: var(--color-lavender);
   color: var(--color-black);
 
@@ -2015,10 +1957,10 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 10000px;
+  gap: 3px;
+  padding: 4px;
 
-  padding: -6px;
-
+  background: var(--preset-background);
   border: 2px solid var(--preset-foreground);
 
   flex-shrink: 0;
@@ -2070,6 +2012,25 @@
   transform: scale(0.72);
 }
 
+/* Preset information */
+.input-group input.input-error {
+  background-color: var(--color-pink);
+  color: #111111;
+}
+
+.error-message {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+
+  background: var(--color-pink);
+  color: #111111;
+  border: var(--border-thin);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
 
 /* ========================================
    DIAMOND / NIGHT
@@ -2145,22 +2106,7 @@
 
 /* Preview borders */
 
-.preset-card:nth-child(1) .preset-preview,
 
-.preset-card:nth-child(4) .preset-preview {
-  background: #111111;
-  border-color: #f7f5ef;
-}
-
-.preset-card:nth-child(2) .preset-preview {
-  background: #ffffff;
-  border-color: #111111;
-}
-
-.preset-card:nth-child(3) .preset-preview {
-  background: #d7ff3f;
-  border-color: #111111;
-}
 
 @media (max-width: 760px) {
   .preset-grid {
@@ -2179,7 +2125,7 @@
 
 .site-footer {
   width: 100%;
-  margin-top: 5rem;
+  margin-top: 2rem;
   padding: 1.5rem 0;
 
   display: flex;
@@ -2235,4 +2181,34 @@
   .interactive-background {
     display: none;
   }
+}
+
+/* ==================== DARK MODE: TEXT ON ACCENT BACKGROUNDS ==================== */
+
+.option-button.active,
+.gradient-toggle.active,
+.pattern-card.active,
+.download-button:hover:not(:disabled),
+.download-button.copy-button,
+.recent-card:hover,
+.github-link:hover,
+.info-button:hover,
+.control-header output,
+.status,
+.preview-header,
+.preview-footer,
+.mobile-scroll-button {
+  color: #111111;
+}
+
+/* Copy button hover swaps to a dark fill in dark mode */
+.app.dark-mode .download-button.copy-button:hover:not(:disabled) {
+  background: #111111;
+  color: var(--color-acid);
+}
+
+/* Recent card tag: light fill needs dark text, so use acid fill instead */
+.app.dark-mode .recent-card-index {
+  background: var(--color-acid);
+  color: #111111;
 }

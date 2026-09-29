@@ -871,23 +871,7 @@ function App() {
 
                     </div>
 
-                    <div
-                      className="mini-pattern foreground-pattern"
-                      style={{
-                        backgroundColor:
-                          foregroundColor,
-                      }}
-                    >
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+
 
                   </div>
 
@@ -940,23 +924,7 @@ function App() {
 
                     </div>
 
-                    <div
-                      className="mini-pattern background-pattern"
-                      style={{
-                        backgroundColor:
-                          backgroundColor,
-                      }}
-                    >
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+
 
                   </div>
 
