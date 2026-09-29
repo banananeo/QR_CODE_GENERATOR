@@ -131,6 +131,10 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [selectedType, setSelectedType] = useState("website");
   const [content, setContent] = useState("");
+  //Wifi-QR
+  const escapeWifi = (value) => value.replace(/([\\;,:"])/g, "\\$1");
+  const [wifiPassword, setWifiPassword] = useState("");
+  const [wifiSecurity, setWifiSecurity] = useState("WPA");
   //QR Size 
   const [qrSize, setQrSize] = useState(320);
   //Error Correction 
@@ -211,6 +215,15 @@ function App() {
     if (!content.trim()) {
       return "";
     }
+    if (selectedType === "wifi") {
+      const ssid = escapeWifi(content.trim());
+
+      if (wifiSecurity === "nopass") {
+        return `WIFI:T:nopass;S:${ssid};;`;
+      }
+
+      return `WIFI:T:${wifiSecurity};S:${ssid};P:${escapeWifi(wifiPassword)};;`;
+    }
 
     if (selectedType === "email") {
       return `mailto:${content}`;
@@ -289,6 +302,24 @@ function App() {
       isDarkMode ? "dark" : "light"
     );
   }, [isDarkMode]);
+  useEffect(() => {
+    const preview = document.querySelector(".preview-card");
+
+    if (!preview) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowScrollButton(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    observer.observe(preview);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -297,24 +328,6 @@ function App() {
       if (!qrCanvasRef.current || !qrValue) {
         return;
       }
-      useEffect(() => {
-        const preview = document.querySelector(".preview-card");
-
-        if (!preview) return;
-
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            setShowScrollButton(!entry.isIntersecting);
-          },
-          {
-            threshold: 0.2,
-          }
-        );
-
-        observer.observe(preview);
-
-        return () => observer.disconnect();
-      }, []);
 
       const canvas = await renderCustomQR({
         value: qrValue,
@@ -352,14 +365,26 @@ function App() {
     backgroundColor,
     qrMargin,
     errorCorrection,
+    gradientEnabled, gradientStart, gradientEnd,
   ]);
 
   /* ==================== COPY ==================== */
   const copyToClipboard = async () => {
-    if (!qrValue || error) return;
+    const canvas = qrCanvasRef.current?.querySelector("canvas");
+    if (!canvas || !qrValue || error) return;
 
     try {
-      await navigator.clipboard.writeText(qrValue);
+      const blobPromise = new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) =>
+            blob ? resolve(blob) : reject(new Error("Could not create image")),
+          "image/png"
+        );
+      });
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blobPromise }),
+      ]);
 
       setCopied(true);
 
@@ -571,6 +596,8 @@ function App() {
                       setSelectedType(type);
                       setContent("");
                       setError("");
+                      setWifiPassword("");
+                      setWifiSecurity("WPA")
                     }}
                   >
                     {config.name}
@@ -600,6 +627,46 @@ function App() {
               />
               {error && <p className="error-message">{error}</p>}
             </div>
+            {selectedType === "wifi" && (
+              <>
+                <div className="design-control">
+                  <div className="control-header">
+                    <span>SECURITY</span>
+                  </div>
+
+                  <div className="option-row">
+                    {[
+                      ["WPA", "WPA/WPA2"],
+                      ["WEP", "WEP"],
+                      ["nopass", "None"],
+                    ].map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className={`option-button ${wifiSecurity === value ? "active" : ""}`}
+                        onClick={() => setWifiSecurity(value)}
+                      >
+                        <strong>{label}</strong>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {wifiSecurity !== "nopass" && (
+                  <div className="input-group">
+                    <label htmlFor="wifi-password">Password</label>
+
+                    <input
+                      id="wifi-password"
+                      type="text"
+                      value={wifiPassword}
+                      onChange={(event) => setWifiPassword(event.target.value)}
+                      placeholder="Network password"
+                    />
+                  </div>
+                )}
+              </>
+            )}
 
             {/* ==================== QR SIZE ==================== */}
 
@@ -1225,7 +1292,7 @@ function App() {
                   onClick={copyToClipboard}
                   disabled={!qrValue || !!error}
                 >
-                  {copied ? "COPIED ✓" : "COPY TO CLIPBOARD"}
+                  {copied ? "COPIED ✓" : "COPY IMAGE"}
                 </button>
 
               </div>

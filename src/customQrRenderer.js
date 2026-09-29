@@ -7,6 +7,7 @@ const PATTERN_TYPES = {
     cross: "cross",
     hex: "hex",
     pixel: "pixel",
+    grid: "grid",
 };
 
 function drawModule(ctx, type, x, y, size, color) {
@@ -78,6 +79,23 @@ function drawModule(ctx, type, x, y, size, color) {
                 y + padding,
                 size - padding * 2,
                 size - padding * 2
+            );
+            break;
+        }
+        case "rounded":
+            ctx.beginPath();
+            ctx.roundRect(x, y, size, size, size * 0.3);
+            ctx.fill();
+            break;
+
+        case "grid": {
+            const gap = size * 0.08;
+
+            ctx.fillRect(
+                x + gap,
+                y + gap,
+                size - gap * 2,
+                size - gap * 2
             );
             break;
         }
@@ -223,6 +241,21 @@ function moduleToSVG(
 
             break;
         }
+        case "rounded": {
+            parts.push(
+                `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size * 0.3}" ry="${size * 0.3}" fill="${color}"/>`
+            );
+            break;
+        }
+
+        case "grid": {
+            const gap = size * 0.08;
+
+            parts.push(
+                `<rect x="${x + gap}" y="${y + gap}" width="${size - gap * 2}" height="${size - gap * 2}" fill="${color}"/>`
+            );
+            break;
+        }
 
         default:
             parts.push(
@@ -338,6 +371,9 @@ export function createCustomQRSVG({
     pattern = "classic",
     margin = 16,
     errorCorrection = "M",
+    gradientEnabled = false,
+    gradientStart = "#111111",
+    gradientEnd = "#A89BFF"
 }) {
     if (!value) return null;
 
@@ -348,6 +384,13 @@ export function createCustomQRSVG({
     const moduleCount = qr.modules.size;
     const availableSize = size - margin * 2;
     const moduleSize = availableSize / moduleCount;
+    let moduleFill = foregroundColor;
+    if (gradientEnabled) {
+        parts.push(
+            `<defs><linearGradient id="qr-gradient" gradientUnits="userSpaceOnUse" x1="${margin}" y1="${margin}" x2="${size - margin}" y2="${size - margin}"><stop offset="0" stop-color="${gradientStart}"/><stop offset="1" stop-color="${gradientEnd}"/></linearGradient></defs>`
+        );
+        moduleFill = "url(#qr-gradient)";
+    }
 
     const selectedPattern =
         PATTERN_TYPES[pattern] || "classic";
