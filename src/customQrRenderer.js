@@ -266,6 +266,7 @@ function moduleToSVG(
     }
 }
 
+
 export async function renderCustomQR({
     value,
     size = 320,
@@ -375,7 +376,7 @@ export function createCustomQRSVG({
     errorCorrection = "M",
     gradientEnabled = false,
     gradientStart = "#111111",
-    gradientEnd = "#A89BFF"
+    gradientEnd = "#A89BFF",
 }) {
     if (!value) return null;
 
@@ -386,22 +387,23 @@ export function createCustomQRSVG({
     const moduleCount = qr.modules.size;
     const availableSize = size - margin * 2;
     const moduleSize = availableSize / moduleCount;
+    const selectedPattern = PATTERN_TYPES[pattern] || "classic";
+
+    // parts must exist BEFORE anything is pushed into it
+    const parts = [];
+
+    parts.push(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`
+    );
+
     let moduleFill = foregroundColor;
+
     if (gradientEnabled) {
         parts.push(
             `<defs><linearGradient id="qr-gradient" gradientUnits="userSpaceOnUse" x1="${margin}" y1="${margin}" x2="${size - margin}" y2="${size - margin}"><stop offset="0" stop-color="${gradientStart}"/><stop offset="1" stop-color="${gradientEnd}"/></linearGradient></defs>`
         );
         moduleFill = "url(#qr-gradient)";
     }
-
-    const selectedPattern =
-        PATTERN_TYPES[pattern] || "classic";
-
-    const parts = [];
-
-    parts.push(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`
-    );
 
     parts.push(
         `<rect width="${size}" height="${size}" fill="${backgroundColor}"/>`
@@ -411,9 +413,6 @@ export function createCustomQRSVG({
         for (let column = 0; column < moduleCount; column++) {
             if (!qr.modules.get(row, column)) continue;
 
-            const x = margin + column * moduleSize;
-            const y = margin + row * moduleSize;
-
             const isFinderArea =
                 (column < 7 && row < 7) ||
                 (column >= moduleCount - 7 && row < 7) ||
@@ -421,46 +420,28 @@ export function createCustomQRSVG({
 
             if (isFinderArea) continue;
 
-            moduleToSVG(
-                parts,
-                selectedPattern,
-                x,
-                y,
-                moduleSize,
-                foregroundColor
-            );
+            const x = margin + column * moduleSize;
+            const y = margin + row * moduleSize;
+
+            // moduleFill instead of foregroundColor, so the gradient applies
+            moduleToSVG(parts, selectedPattern, x, y, moduleSize, moduleFill);
         }
     }
 
-    drawFinderSVG(
-        parts,
-        margin,
-        margin,
-        moduleSize,
-        foregroundColor,
-        backgroundColor
-    );
-
-    drawFinderSVG(
-        parts,
-        margin + (moduleCount - 7) * moduleSize,
-        margin,
-        moduleSize,
-        foregroundColor,
-        backgroundColor
-    );
-
-    drawFinderSVG(
-        parts,
-        margin,
-        margin + (moduleCount - 7) * moduleSize,
-        moduleSize,
-        foregroundColor,
-        backgroundColor
-    );
+    // Finder patterns stay solid (same as your canvas version)
+    drawFinderSVG(parts, margin, margin, moduleSize, foregroundColor, backgroundColor);
+    drawFinderSVG(parts, margin + (moduleCount - 7) * moduleSize, margin, moduleSize, foregroundColor, backgroundColor);
+    drawFinderSVG(parts, margin, margin + (moduleCount - 7) * moduleSize, moduleSize, foregroundColor, backgroundColor);
 
     parts.push("</svg>");
 
     return parts.join("");
 }
-
+export function getModuleCount(value, errorCorrection) {
+    try {
+        return QRCode.create(value, { errorCorrectionLevel: errorCorrection })
+            .modules.size;
+    } catch {
+        return null;
+    }
+}

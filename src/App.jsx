@@ -1,8 +1,10 @@
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
+import { getScanWarnings } from "./getScanWarnings";
 import {
   renderCustomQR,
   createCustomQRSVG,
+  getModuleCount,
 } from "./customQrRenderer";
 import InteractiveBackground from "./InteractiveBackground";
 
@@ -122,6 +124,14 @@ const qrPresets = [
     qrPattern: "diamond",
   },
 ];
+const normalizeUrl = (value) => {
+  const trimmed = value.trim();
+
+  // keep it as typed if it already has a scheme (http://, https://, ftp://)
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+};
 
 /* ==================== MAIN ==================== */
 
@@ -171,14 +181,25 @@ function App() {
     }
 
     if (type === "website") {
+      if (/\s/.test(trimmed)) {
+        return "Website address can't contain spaces.";
+      }
+
       try {
-        const url = new URL(trimmed);
+        const url = new URL(normalizeUrl(trimmed));
 
         if (!["http:", "https:"].includes(url.protocol)) {
           return "Please enter a valid HTTP or HTTPS URL.";
         }
+
+        const labels = url.hostname.split(".");
+        const tld = labels[labels.length - 1];
+
+        if (labels.length < 2 || tld.length < 2) {
+          return "Please enter a valid website, like www.example.com";
+        }
       } catch {
-        return "Please enter a valid website URL.";
+        return "Please enter a valid website, like www.example.com";
       }
     }
 
@@ -232,6 +253,11 @@ function App() {
     if (selectedType === "phone") {
       return `tel:${content}`;
     }
+    if (selectedType === "website") {
+      return normalizeUrl(content);
+    }
+
+    return content;
 
     return content;
   })();
@@ -286,6 +312,32 @@ function App() {
   const [gradientStart, setGradientStart] = useState("#111111");
   const [gradientEnd, setGradientEnd] = useState("#A89BFF");
 
+  /* ==================== SCAN RELIABILITY ==================== */
+  const moduleCount = qrValue
+    ? getModuleCount(qrValue, errorCorrection)
+    : null;
+
+  const tooLong = Boolean(qrValue) && moduleCount === null;
+
+  const moduleSize = moduleCount
+    ? (qrSize - qrMargin * 2) / moduleCount
+    : Infinity;
+
+  const scanWarnings =
+    qrValue && !tooLong
+      ? getScanWarnings({
+        foregroundColor,
+        backgroundColor,
+        gradientEnabled,
+        gradientStart,
+        gradientEnd,
+        margin: qrMargin,
+        moduleSize,
+        pattern: qrPattern,
+        errorCorrection,
+      })
+      : [];
+
   /* ==================== PRESETS ==================== */
   const applyPreset = (preset) => {
     setForegroundColor(preset.foregroundColor);
@@ -325,7 +377,7 @@ function App() {
     let cancelled = false;
 
     const generateQR = async () => {
-      if (!qrCanvasRef.current || !qrValue) {
+      if (!qrCanvasRef.current || !qrValue || tooLong) {
         return;
       }
 
@@ -450,8 +502,10 @@ function App() {
     link.href = url;
 
     link.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
 
-    URL.revokeObjectURL(url);
   };
 
   /* LOCAL STORAGE */
@@ -697,7 +751,6 @@ function App() {
                 }
               />
             </div>
-            {/* ==================== ERROR CORRECTION ==================== */}
 
             {/* ==================== ERROR CORRECTION ==================== */}
 
@@ -1189,9 +1242,23 @@ function App() {
                   LIVE PREVIEW
                 </span>
 
-                <span className="status">
-                  ● READY
-                </span>
+                {(() => {
+                  let label = "● SCANNABLE";
+                  let tone = "ok";
+
+                  if (!qrValue) {
+                    label = "● EMPTY";
+                    tone = "empty";
+                  } else if (error || tooLong) {
+                    label = "● INVALID";
+                    tone = "bad";
+                  } else if (scanWarnings.length > 0) {
+                    label = "● CHECK";
+                    tone = "warn";
+                  }
+
+                  return <span className={`status status-${tone}`}>{label}</span>;
+                })()}
               </div>
 
               {/* ==================== QR PREVIEW ==================== */}
@@ -1223,11 +1290,26 @@ function App() {
                   </span>
                 )}
               </div>
+              {tooLong && (
+                <div className="scan-warning scan-warning-error" role="alert">
+                  <strong>CONTENT TOO LONG</strong>
+                  <p>
+                    This much data can't fit in a QR code at this error correction level.
+                    Shorten it or lower the error correction.
+                  </p>
+                </div>
+              )}
 
-              {/* ==================== HIDDEN SVG SOURCE ==================== */}
-
-
-
+              {scanWarnings.length > 0 && (
+                <div className="scan-warning" role="status">
+                  <strong>⚠ SCAN WARNING</strong>
+                  <ul>
+                    {scanWarnings.map((warning) => (
+                      <li key={warning}>{warning}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* ==================== DOWNLOAD ==================== */}
 

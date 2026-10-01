@@ -234,7 +234,7 @@
   margin-top: 1rem;
 }
 
-.type-button,
+
 .input-group input,
 .status,
 .theme-button {
@@ -312,6 +312,7 @@
 
   border: var(--border-thick);
   box-shadow: var(--shadow-large);
+  border-color: #000000;
 
   padding: var(--space-md);
 }
@@ -436,7 +437,7 @@
 
 
 .type-button.active {
-  background-color: var(--color-lavender);
+  background-color: var(--color-acid);
   color: #111111;
 
   transform: translate(2px, 2px);
@@ -1390,7 +1391,7 @@
 }
 
 .pattern-card.active {
-  background-color: var(--color-lavender);
+  background-color: var(--color-acid);
 
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--color-black);
@@ -2210,8 +2211,91 @@
   color: var(--color-acid);
 }
 
-/* Recent card tag: light fill needs dark text, so use acid fill instead */
+
 .app.dark-mode .recent-card-index {
   background: var(--color-acid);
+  color: #111111;
+}
+
+.app.dark-mode .type-button {
+  background: none;
+  color: #f7f5ef;
+}
+
+
+.app.dark-mode .type-button.active {
+  background-color: var(--color-acid);
+  color: black;
+}
+
+.app.app.dark-mode .qr-placeholder {
+  border: #000000;
+}
+
+.app.app.dark-mode .pattern-card.active {
+  background-color: var(--color-acid);
+  color: black;
+}
+
+.app.app.dark-mode .pattern-preview {
+  background-color: #111111;
+}
+
+/* Error Messages */
+.scan-warning {
+  margin-top: var(--space-sm);
+  padding: 0.75rem 0.9rem;
+
+  background: var(--color-acid);
+  color: #111111;
+
+  border: var(--border-thin);
+  box-shadow: 3px 3px 0 var(--color-black);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.scan-warning strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.scan-warning ul {
+  padding-left: 1.1rem;
+}
+
+.scan-warning li+li {
+  margin-top: 0.3rem;
+}
+
+.scan-warning p {
+  margin: 0;
+}
+
+.scan-warning-error {
+  background: var(--color-pink);
+}
+
+.status-ok {
+  background-color: var(--color-mint);
+  color: #111111;
+}
+
+.status-warn {
+  background-color: var(--color-acid);
+  color: #111111;
+}
+
+.status-bad {
+  background-color: var(--color-pink);
+  color: #111111;
+}
+
+.status-empty {
+  background-color: var(--color-surface);
   color: #111111;
 }
