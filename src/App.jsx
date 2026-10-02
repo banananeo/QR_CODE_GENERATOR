@@ -275,6 +275,10 @@ function App() {
       backgroundColor,
       errorCorrection,
       qrMargin,
+      gradientEnabled,
+      gradientStart,
+      gradientEnd,
+      wifiSecurity: selectedType === "wifi" ? wifiSecurity : undefined,
     };
 
     setRecentQRCodes((current) => {
@@ -282,7 +286,8 @@ function App() {
         (item) =>
           !(
             item.type === newQR.type &&
-            item.content === newQR.content
+            item.content === newQR.content &&
+            item.wifiSecurity === newQR.wifiSecurity
           )
       );
 
@@ -305,7 +310,16 @@ function App() {
     setBackgroundColor(qr.backgroundColor);
     setErrorCorrection(qr.errorCorrection);
     setQrMargin(qr.qrMargin);
+    setGradientEnabled(qr.gradientEnabled ?? false);
+    setGradientStart(qr.gradientStart ?? "#111111");
+    setGradientEnd(qr.gradientEnd ?? "#A89BFF");
+    setWifiSecurity(qr.wifiSecurity ?? "WPA");
+    setWifiPassword("");
     setError("");
+  };
+  const clearRecentQR = () => {
+    setRecentQRCodes([]);
+    localStorage.removeItem("qr-lab-recent");
   };
   /* ==================== GRADIENT ==================== */
   const [gradientEnabled, setGradientEnabled] = useState(false);
@@ -1358,10 +1372,25 @@ function App() {
       {/* ==================== RECENT QR CODES ==================== */}
 
       <section className="recent-section" id="recent">
-        <div className="section-heading">
-          <p className="eyebrow">RECENT</p>
+        <div className="recent-section">
+          <div className="section-heading">
+            <p className="eyebrow">RECENT</p>
 
-          <h2>YOUR RECENT QR.</h2>
+            <h2>YOUR RECENT QR.</h2>
+          </div>
+          {recentQRCodes.length > 0 && (
+            <button
+              type="button"
+              className="clear-button"
+              onClick={() => {
+                if (window.confirm("Clear all recent QR codes?")) {
+                  clearRecentQR();
+                }
+              }}
+            >
+              CLEAR ALL
+            </button>
+          )}
         </div>
 
         {recentQRCodes.length === 0 ? (

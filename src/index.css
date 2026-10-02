@@ -1,34 +1,8 @@
 :root {
-  /* Colors */
-  --color-background: #f7f5ef;
-  --color-black: #111111;
-  --color-acid: #d7ff3f;
-  --color-lavender: #a89bff;
-  --color-pink: #ff8fb3;
-  --color-mint: #8de5c1;
-  /* Cursor Position */
-  --mouse-x: 50vw;
-  --mouse-y: 50vh;
-
-  /* Borders */
-  --border-thick: 3px solid var(--color-black);
-  --border-thin: 2px solid var(--color-black);
-
-  /* Shadows */
-  --shadow-large: 7px 7px 0 var(--color-black);
-  --shadow-small: 4px 4px 0 var(--color-black);
-
-  /* Spacing */
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2.5rem;
-  --space-xl: 4rem;
   --color-background: #f7f5ef;
   --color-black: #111111;
   --color-surface: #ffffff;
   --color-module: #111111;
-
   --color-acid: #d7ff3f;
   --color-lavender: #a89bff;
   --color-pink: #ff8fb3;
@@ -36,7 +10,6 @@
 
   --border-thick: 3px solid var(--color-black);
   --border-thin: 2px solid var(--color-black);
-
   --shadow-large: 7px 7px 0 var(--color-black);
   --shadow-small: 4px 4px 0 var(--color-black);
 
@@ -45,8 +18,6 @@
   --space-md: 1.5rem;
   --space-lg: 2.5rem;
   --space-xl: 4rem;
-
-
 }
 
 .app.dark-mode {
