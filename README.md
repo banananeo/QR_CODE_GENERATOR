@@ -1,6 +1,6 @@
 # QR//LAB
 
-A simple QR Code Generator and Designer built with React.
+NOT YOUR BORING QR Generator
 
 QR//LAB lets users create QR codes for different types of information and customize their appearance in real time.
 
