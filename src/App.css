@@ -264,6 +264,7 @@
 
 
 
+
 .intro {
   padding: 1.25rem 1rem 2rem;
   border-bottom: var(--border-thick);
@@ -2295,4 +2296,12 @@
 .status-empty {
   background-color: var(--color-surface);
   color: #111111;
+}
+
+.app.app.dark-mode .input-group:active {
+  background-color: var(--color-background)
+}
+
+.app.app.dark-mode .status-empty {
+  background-color: #d7ff3f;
 }
