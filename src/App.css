@@ -311,7 +311,7 @@
   background-color: var(--color-lavender);
 
   border: var(--border-thick);
-  box-shadow: var(--shadow-large);
+
   border-color: #000000;
 
   padding: var(--space-md);
@@ -745,10 +745,7 @@
   box-sizing: border-box;
 }
 
-.color-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--color-black);
-}
+
 
 .color-control-header {
   display: flex;
@@ -777,7 +774,7 @@
   align-items: center;
   gap: 1rem;
 
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -812,7 +809,7 @@
   padding: 0 0 0.8rem;
   border-bottom: var(--border-thin);
 
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.7rem;
   font-weight: 600;
 }
@@ -876,14 +873,14 @@
 }
 
 .color-value strong {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 1rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .color-value span {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.6rem;
   opacity: 0.5;
 }
@@ -922,7 +919,7 @@
   border: var(--border-thin);
   box-shadow: 3px 3px 0 var(--color-black);
 
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.65rem;
   font-weight: 600;
 
@@ -978,7 +975,7 @@
   border: var(--border-thin);
   box-shadow: 4px 4px 0 var(--color-black);
 
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.65rem;
   font-weight: 600;
 
@@ -1066,7 +1063,7 @@
   border: var(--border-thin);
   box-shadow: 3px 3px 0 var(--color-black);
 
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Bricolage Grotesque", monospace;
   font-size: 0.65rem;
   font-weight: 600;
 
@@ -1695,7 +1692,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: 0.95rem;
 }
 
@@ -1790,7 +1787,7 @@
 }
 
 .option-button strong {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: 1.1rem;
 }
 
@@ -1814,7 +1811,7 @@
 .control-hint {
   margin: 0.6rem 0 0;
 
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   color: #000000;
   font-size: 0.7rem;
   line-height: 1.5;
@@ -2062,7 +2059,7 @@
 }
 
 .preset-info strong {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: 1.05rem;
   text-transform: uppercase;
 }
