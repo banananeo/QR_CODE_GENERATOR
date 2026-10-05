@@ -43,4 +43,4 @@ QR//LAB lets users create QR codes for different types of information and custom
 Clone the repository:
 
 ```bash
-git clone https://github.com/banananeo/QR_CODE_GENERATOR.git)
+git clone https://github.com/banananeo/QR_CODE_GENERATOR.git
