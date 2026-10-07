@@ -38,9 +38,12 @@ QR//LAB lets users create QR codes for different types of information and custom
 - QR Code library
 - Vite
 
+[## QR//lab is live!!](https://qrlab.cc.cd/)
+
 ## How to Run
 
 Clone the repository:
 
 ```bash
 git clone https://github.com/banananeo/QR_CODE_GENERATOR.git
+
